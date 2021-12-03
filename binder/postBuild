@@ -1,3 +1,6 @@
+#!/bin/bash
+jupyter contrib nbextension install --user
+pip install jupyter_contrib_nbextensions
 pip install -e jupyterlab/gst
 pip install -e jupyterlab/gst-settings
 pip install -e jupyterlab/documentation
@@ -5,3 +8,6 @@ jupyter-labextension install jupyterlab/gst
 jupyter-labextension install jupyterlab/gst-settings
 jupyter-labextension install jupyterlab/documentation
 jupyter lab build
+jupyter-labextension enable --py jupyterlab/gst
+jupyter-labextension enable --py jupyterlab/gst-settings
+jupyter-labextension enable --py jupyterlab/documentation
