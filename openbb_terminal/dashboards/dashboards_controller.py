@@ -4,10 +4,10 @@ __docformat__ = "numpy"
 import argparse
 import logging
 import os
-import subprocess
 from typing import List
 
 from prompt_toolkit.completion import NestedCompleter
+from voila.app import Voila
 
 from openbb_terminal import feature_flags as obbff
 from openbb_terminal.decorators import log_start_end
@@ -137,21 +137,16 @@ def create_call(other_args: List[str], name: str, filename: str = None) -> None:
         file = os.path.join(
             os.path.abspath(os.path.dirname(__file__)), f"{filename}.ipynb"
         )
-        if not ns_parser.input:
-            console.print(
-                f"Warning: opens a port on your computer to run a {cmd} server."
-            )
-            response = input("Would you like us to run the server for you? y/n\n")
-        args = ""
-        if ns_parser.dark and not ns_parser.jupyter:
-            args += "--theme=dark"
-        if ns_parser.input or response.lower() == "y":
-            subprocess.Popen(
-                f"{cmd} {file} {args}",
-                stdout=subprocess.PIPE,
-                stderr=subprocess.STDOUT,
-                shell=True,
-            )
-        else:
-            console.print(f"Type: {cmd} {file}\ninto a terminal to run.")
-        console.print("")
+        # TODO: Add jupyterlab condition here
+        try:
+            app = Voila(notebook_path=file)
+            app.initialize()
+            app.start()
+        except (KeyboardInterrupt, SystemExit):
+            # TODO: This thing does not work smoothly
+            console.print("Closing dashboard")
+        finally:
+            console.print("bye")
+    else:
+        console.print(f"Type: {cmd} {file}\ninto a terminal to run.")
+    console.print("")
